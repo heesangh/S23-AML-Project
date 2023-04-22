@@ -76,18 +76,14 @@ class Model:
         optimizer = torch.optim.Adam(self.model.parameters(), weight_decay=1e-4)
 
         scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, 0.95)
-
-        for epoch_index in tqdm(range(self.config.n_epochs)):
-            print("Training...")
-            # self.model.train()
-            print("Epoch: " + str(epoch_index + 1) + " of " + str(self.config.n_epochs))
-
+        
+        for epoch_index in tqdm(range(self.config.n_epochs),position=0):
+            self.model.train()
             train_loader_len = len(self.train_loader)
-            print("train loader len", train_loader_len)
-
-            for batch in self.train_loader:
-                train_loader_len = train_loader_len - 1
-                print("train loader", train_loader_len)
+            count = 1
+            print("Epoch: " + str(epoch_index + 1) + " of " + str(self.config.n_epochs))
+            for batch in tqdm(self.train_loader,position=1, leave=False):
+                print(f"Training: {count}/ {train_loader_len}")
                 I1 = Variable(batch["I1"].float())
                 I2 = Variable(batch["I2"].float())
                 label = torch.squeeze(Variable(batch["label"]))
@@ -102,6 +98,7 @@ class Model:
                 loss = self.criterion(output, label.long())
                 loss.backward()
                 optimizer.step()
+                count = count + 1
 
             scheduler.step()
 
