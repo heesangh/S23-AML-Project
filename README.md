@@ -1,12 +1,12 @@
 # Change Detection in satellite images with Early and Late fusion 
 
-# Directory
+### Directory
 
 
-# Dataset
+### Dataset
 
 
-## Notes
+### Notes
 The `requirements.txt` file should list all Python libraries that your notebooks
 depend on, and they will be installed using:
 
