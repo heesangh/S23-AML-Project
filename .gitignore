@@ -3,3 +3,4 @@
 **/.pytest_cache
 **/dataset/
 dataset**.**
+**/.DS_Store
