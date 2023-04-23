@@ -379,7 +379,7 @@ class Model:
 
         return net_loss, net_accuracy, class_accuracy, pr_rec
 
-    def kappa(tp, tn, fp, fn):
+    def kappa(self,tp, tn, fp, fn):
         N = tp + tn + fp + fn
         p0 = (tp + tn) / N
         pe = ((tp+fp)*(tp+fn) + (tn+fp)*(tn+fn)) / (N * N)
