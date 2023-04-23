@@ -35,6 +35,7 @@ class Model:
         config: ModelConfig,
         train_dataset: ChangeDetectionDataset,
         train_loader: DataLoader,
+        test_dataset: ChangeDetectionDataset,
         criterion: nn.NLLLoss,
         model_name,
     ):
@@ -42,6 +43,7 @@ class Model:
         self.model = model
         self.train_dataset = train_dataset
         self.train_loader = train_loader
+        self.test_dataset = test_dataset
         self.criterion = criterion
         self.model_name = model_name
 
@@ -102,23 +104,14 @@ class Model:
 
             scheduler.step()
 
-            (
-                epoch_train_loss[epoch_index],
-                epoch_train_accuracy[epoch_index],
-                cl_acc,
-                pr_rec,
-            ) = self.test(self.train_dataset)
+            epoch_train_loss[epoch_index], epoch_train_accuracy[epoch_index], cl_acc, pr_rec = self.test(self.train_dataset)
             epoch_train_nochange_accuracy[epoch_index] = cl_acc[0]
             epoch_train_change_accuracy[epoch_index] = cl_acc[1]
             epoch_train_precision[epoch_index] = pr_rec[0]
             epoch_train_recall[epoch_index] = pr_rec[1]
             epoch_train_Fmeasure[epoch_index] = pr_rec[2]
-            (
-                epoch_test_loss[epoch_index],
-                epoch_test_accuracy[epoch_index],
-                cl_acc,
-                pr_rec,
-            ) = self.test(self.train_dataset)
+            
+            epoch_test_loss[epoch_index], epoch_test_accuracy[epoch_index], cl_acc, pr_rec = self.test(self.test_dataset)
             epoch_test_nochange_accuracy[epoch_index] = cl_acc[0]
             epoch_test_change_accuracy[epoch_index] = cl_acc[1]
             epoch_test_precision[epoch_index] = pr_rec[0]
@@ -127,167 +120,92 @@ class Model:
 
             plt.figure(num=1)
             plt.clf()
-            (l1_1,) = plt.plot(
-                t[: epoch_index + 1],
-                epoch_train_loss[: epoch_index + 1],
-                label="Train loss",
-            )
-            (l1_2,) = plt.plot(
-                t[: epoch_index + 1],
-                epoch_test_loss[: epoch_index + 1],
-                label="Test loss",
-            )
+            l1_1, = plt.plot(t[:epoch_index + 1], epoch_train_loss[:epoch_index + 1], label='Train loss')
+            l1_2, = plt.plot(t[:epoch_index + 1], epoch_test_loss[:epoch_index + 1], label='Test loss')
             plt.legend(handles=[l1_1, l1_2])
             plt.grid()
-            #         plt.gcf().gca().set_ylim(bottom = 0)
-            plt.gcf().gca().set_xlim(left=0)
-            plt.title("Loss")
+            plt.gcf().gca().set_xlim(left = 0)
+            plt.title('Loss')
             display.clear_output(wait=True)
             display.display(plt.gcf())
 
             plt.figure(num=2)
             plt.clf()
-            (l2_1,) = plt.plot(
-                t[: epoch_index + 1],
-                epoch_train_accuracy[: epoch_index + 1],
-                label="Train accuracy",
-            )
-            (l2_2,) = plt.plot(
-                t[: epoch_index + 1],
-                epoch_test_accuracy[: epoch_index + 1],
-                label="Test accuracy",
-            )
+            l2_1, = plt.plot(t[:epoch_index + 1], epoch_train_accuracy[:epoch_index + 1], label='Train accuracy')
+            l2_2, = plt.plot(t[:epoch_index + 1], epoch_test_accuracy[:epoch_index + 1], label='Test accuracy')
             plt.legend(handles=[l2_1, l2_2])
             plt.grid()
             plt.gcf().gca().set_ylim(0, 100)
-            #         plt.gcf().gca().set_ylim(bottom = 0)
-            #         plt.gcf().gca().set_xlim(left = 0)
-            plt.title("Accuracy")
+            plt.title('Accuracy')
             display.clear_output(wait=True)
             display.display(plt.gcf())
 
             plt.figure(num=3)
             plt.clf()
-            (l3_1,) = plt.plot(
-                t[: epoch_index + 1],
-                epoch_train_nochange_accuracy[: epoch_index + 1],
-                label="Train accuracy: no change",
-            )
-            (l3_2,) = plt.plot(
-                t[: epoch_index + 1],
-                epoch_train_change_accuracy[: epoch_index + 1],
-                label="Train accuracy: change",
-            )
-            (l3_3,) = plt.plot(
-                t[: epoch_index + 1],
-                epoch_test_nochange_accuracy[: epoch_index + 1],
-                label="Test accuracy: no change",
-            )
-            (l3_4,) = plt.plot(
-                t[: epoch_index + 1],
-                epoch_test_change_accuracy[: epoch_index + 1],
-                label="Test accuracy: change",
-            )
+            l3_1, = plt.plot(t[:epoch_index + 1], epoch_train_nochange_accuracy[:epoch_index + 1], label='Train accuracy: no change')
+            l3_2, = plt.plot(t[:epoch_index + 1], epoch_train_change_accuracy[:epoch_index + 1], label='Train accuracy: change')
+            l3_3, = plt.plot(t[:epoch_index + 1], epoch_test_nochange_accuracy[:epoch_index + 1], label='Test accuracy: no change')
+            l3_4, = plt.plot(t[:epoch_index + 1], epoch_test_change_accuracy[:epoch_index + 1], label='Test accuracy: change')
             plt.legend(handles=[l3_1, l3_2, l3_3, l3_4])
             plt.grid()
             plt.gcf().gca().set_ylim(0, 100)
-            #         plt.gcf().gca().set_ylim(bottom = 0)
-            #         plt.gcf().gca().set_xlim(left = 0)
-            plt.title("Accuracy per class")
+            plt.title('Accuracy per class')
             display.clear_output(wait=True)
             display.display(plt.gcf())
 
             plt.figure(num=4)
             plt.clf()
-            (l4_1,) = plt.plot(
-                t[: epoch_index + 1],
-                epoch_train_precision[: epoch_index + 1],
-                label="Train precision",
-            )
-            (l4_2,) = plt.plot(
-                t[: epoch_index + 1],
-                epoch_train_recall[: epoch_index + 1],
-                label="Train recall",
-            )
-            (l4_3,) = plt.plot(
-                t[: epoch_index + 1],
-                epoch_train_Fmeasure[: epoch_index + 1],
-                label="Train Dice/F1",
-            )
-            (l4_4,) = plt.plot(
-                t[: epoch_index + 1],
-                epoch_test_precision[: epoch_index + 1],
-                label="Test precision",
-            )
-            (l4_5,) = plt.plot(
-                t[: epoch_index + 1],
-                epoch_test_recall[: epoch_index + 1],
-                label="Test recall",
-            )
-            (l4_6,) = plt.plot(
-                t[: epoch_index + 1],
-                epoch_test_Fmeasure[: epoch_index + 1],
-                label="Test Dice/F1",
-            )
+            l4_1, = plt.plot(t[:epoch_index + 1], epoch_train_precision[:epoch_index + 1], label='Train precision')
+            l4_2, = plt.plot(t[:epoch_index + 1], epoch_train_recall[:epoch_index + 1], label='Train recall')
+            l4_3, = plt.plot(t[:epoch_index + 1], epoch_train_Fmeasure[:epoch_index + 1], label='Train Dice/F1')
+            l4_4, = plt.plot(t[:epoch_index + 1], epoch_test_precision[:epoch_index + 1], label='Test precision')
+            l4_5, = plt.plot(t[:epoch_index + 1], epoch_test_recall[:epoch_index + 1], label='Test recall')
+            l4_6, = plt.plot(t[:epoch_index + 1], epoch_test_Fmeasure[:epoch_index + 1], label='Test Dice/F1')
             plt.legend(handles=[l4_1, l4_2, l4_3, l4_4, l4_5, l4_6])
             plt.grid()
             plt.gcf().gca().set_ylim(0, 1)
-            plt.title("Precision, Recall and F-measure")
+            plt.title('Precision, Recall and F-measure')
             display.clear_output(wait=True)
             display.display(plt.gcf())
             fm = epoch_train_Fmeasure[epoch_index]
             if fm > best_fm:
                 best_fm = fm
-                save_str = (
-                    "net-best_epoch-"
-                    + str(epoch_index + 1)
-                    + "_fm-"
-                    + str(fm)
-                    + ".pth.tar"
-                )
+                save_str = 'net-best_epoch-' + str(epoch_index + 1) + '_fm-' + str(fm) + '.pth.tar'
                 torch.save(self.model.state_dict(), save_str)
-
+            
             lss = epoch_train_loss[epoch_index]
             if lss < best_lss:
                 best_lss = lss
-                save_str = (
-                    "net-best_epoch-"
-                    + str(epoch_index + 1)
-                    + "_loss-"
-                    + str(lss)
-                    + ".pth.tar"
-                )
+                save_str = 'net-best_epoch-' + str(epoch_index + 1) + '_loss-' + str(lss) + '.pth.tar'
                 torch.save(self.model.state_dict(), save_str)
-
+                
             if save:
-                im_format = "png"
+                im_format = 'png'
 
                 plt.figure(num=1)
-                plt.savefig(self.model_name + "-01-loss." + im_format)
+                plt.savefig(self.model_name + '-01-loss.' + im_format)
 
                 plt.figure(num=2)
-                plt.savefig(self.model_name + "-02-accuracy." + im_format)
+                plt.savefig(self.model_name + '-02-accuracy.' + im_format)
 
                 plt.figure(num=3)
-                plt.savefig(self.model_name + "-03-accuracy-per-class." + im_format)
+                plt.savefig(self.model_name + '-03-accuracy-per-class.' + im_format)
 
                 plt.figure(num=4)
-                plt.savefig(self.model_name + "-04-prec-rec-fmeas." + im_format)
-
-        out = {
-            "train_loss": epoch_train_loss[-1],
-            "train_accuracy": epoch_train_accuracy[-1],
-            "train_nochange_accuracy": epoch_train_nochange_accuracy[-1],
-            "train_change_accuracy": epoch_train_change_accuracy[-1],
-            "test_loss": epoch_test_loss[-1],
-            "test_accuracy": epoch_test_accuracy[-1],
-            "test_nochange_accuracy": epoch_test_nochange_accuracy[-1],
-            "test_change_accuracy": epoch_test_change_accuracy[-1],
-        }
-
-        print("pr_c, rec_c, f_meas, pr_nc, rec_nc")
+                plt.savefig(self.model_name + '-04-prec-rec-fmeas.' + im_format)
+            
+        out = {'train_loss': epoch_train_loss[-1],
+            'train_accuracy': epoch_train_accuracy[-1],
+            'train_nochange_accuracy': epoch_train_nochange_accuracy[-1],
+            'train_change_accuracy': epoch_train_change_accuracy[-1],
+            'test_loss': epoch_test_loss[-1],
+            'test_accuracy': epoch_test_accuracy[-1],
+            'test_nochange_accuracy': epoch_test_nochange_accuracy[-1],
+            'test_change_accuracy': epoch_test_change_accuracy[-1]}
+        
+        print('pr_c, rec_c, f_meas, pr_nc, rec_nc')
         print(pr_rec)
-
+        
         return out
 
     def test(self, dset):
@@ -462,8 +380,6 @@ class Model:
         dice = 2 * prec * rec / (prec + rec)
         prec_nc = tn / (tn + fn)
         rec_nc = tn / (tn + fp)
-        
-        # pr_rec = [prec, rec, dice, prec_nc, rec_nc]
     
         k = self.kappa(tp, tn, fp, fn)
     
