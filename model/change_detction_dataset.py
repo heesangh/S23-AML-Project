@@ -44,9 +44,6 @@ def read_img_trio(path,filename):
     s2 = img_b.shape
     img_b = np.pad(img_b, ((0, s1[0] - s2[0]), (0, s1[1] - s2[1]), (0, 0)), "edge")
 
-    img_a = torch.FloatTensor(img_a)
-    img_b = torch.FloatTensor(img_b)
-
     return img_a, img_b, img_label
 
 def reshape_for_torch(I):
