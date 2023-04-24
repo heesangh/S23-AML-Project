@@ -240,7 +240,7 @@ class Model:
                         xmax = s[0]
                     else:
                         xmax = steps0[ii + 1]
-                        ymin = jj
+                    ymin = jj
                     if jj == N - 1:
                         ymax = s[1]
                     else:
