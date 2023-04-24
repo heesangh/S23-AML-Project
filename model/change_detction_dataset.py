@@ -29,8 +29,6 @@ def read_img(path):
 
     if NORMALISE_IMGS:
         I = (I - I.mean()) / I.std()
-
-    I = np.transpose(I, (2, 0, 1))
     return I
 
 
@@ -51,6 +49,9 @@ def read_img_trio(path,filename):
 
     return img_a, img_b, img_label
 
+def reshape_for_torch(I):
+    out = I.transpose((2, 0, 1))
+    return torch.from_numpy(out)
 
 class ChangeDetectionDataset(Dataset):
     """Change Detection dataset class, used for both training and test data."""
@@ -103,8 +104,8 @@ class ChangeDetectionDataset(Dataset):
             # load and store each image
             im_name = im_name[0]
             I1, I2, cm = read_img_trio(path,im_name)  # TODO recall
-            self.imgs_1[im_name] = I1
-            self.imgs_2[im_name] = I2
+            self.imgs_1[im_name] = reshape_for_torch(I1)
+            self.imgs_2[im_name] = reshape_for_torch(I2)
             self.change_maps[im_name] = cm
 
             s = cm.shape
