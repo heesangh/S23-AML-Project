@@ -10,7 +10,7 @@ from model.change_detction_dataset import ChangeDetectionDataset
 # Other
 import matplotlib.pyplot as plt
 import numpy as np
-from tqdm import tqdm as tqdm
+import tqdm
 from IPython import display
 from math import ceil
 
@@ -48,44 +48,15 @@ class Model:
         self.model_name = model_name
 
     def train(self, save=True):
-        t = np.linspace(1, self.config.n_epochs, self.config.n_epochs)
-
-        epoch_train_loss = 0 * t
-        epoch_train_accuracy = 0 * t
-        epoch_train_change_accuracy = 0 * t
-        epoch_train_nochange_accuracy = 0 * t
-        epoch_train_precision = 0 * t
-        epoch_train_recall = 0 * t
-        epoch_train_Fmeasure = 0 * t
-        epoch_test_loss = 0 * t
-        epoch_test_accuracy = 0 * t
-        epoch_test_change_accuracy = 0 * t
-        epoch_test_nochange_accuracy = 0 * t
-        epoch_test_precision = 0 * t
-        epoch_test_recall = 0 * t
-        epoch_test_Fmeasure = 0 * t
-
-        fm = 0
-        best_fm = 0
-
-        lss = 1000
-        best_lss = 1000
-
-        plt.figure(num=1)
-        plt.figure(num=2)
-        plt.figure(num=3)
 
         optimizer = torch.optim.Adam(self.model.parameters(), weight_decay=1e-4)
 
         scheduler = torch.optim.lr_scheduler.ExponentialLR(optimizer, 0.95)
         
-        for epoch_index in tqdm(range(self.config.n_epochs),position=0):
+        for epoch_index in tqdm.tqdm_notebook(range(self.config.n_epochs)):
             self.model.train()
-            train_loader_len = len(self.train_loader)
-            count = 1
             print("Epoch: " + str(epoch_index + 1) + " of " + str(self.config.n_epochs))
-            for batch in tqdm(self.train_loader,position=1, leave=False):
-                print(f"Training: {count}/ {train_loader_len}")
+            for batch in tqdm.tqdm_notebook(self.train_loader):
                 I1 = Variable(batch["I1"].float())
                 I2 = Variable(batch["I2"].float())
                 label = torch.squeeze(Variable(batch["label"]))
@@ -100,113 +71,10 @@ class Model:
                 loss = self.criterion(output, label.long())
                 loss.backward()
                 optimizer.step()
-                count = count + 1
 
             scheduler.step()
 
-            epoch_train_loss[epoch_index], epoch_train_accuracy[epoch_index], cl_acc, pr_rec = self.test(self.train_dataset)
-            epoch_train_nochange_accuracy[epoch_index] = cl_acc[0]
-            epoch_train_change_accuracy[epoch_index] = cl_acc[1]
-            epoch_train_precision[epoch_index] = pr_rec[0]
-            epoch_train_recall[epoch_index] = pr_rec[1]
-            epoch_train_Fmeasure[epoch_index] = pr_rec[2]
-            
-            epoch_test_loss[epoch_index], epoch_test_accuracy[epoch_index], cl_acc, pr_rec = self.test(self.test_dataset)
-            epoch_test_nochange_accuracy[epoch_index] = cl_acc[0]
-            epoch_test_change_accuracy[epoch_index] = cl_acc[1]
-            epoch_test_precision[epoch_index] = pr_rec[0]
-            epoch_test_recall[epoch_index] = pr_rec[1]
-            epoch_test_Fmeasure[epoch_index] = pr_rec[2]
-
-            plt.figure(num=1)
-            plt.clf()
-            l1_1, = plt.plot(t[:epoch_index + 1], epoch_train_loss[:epoch_index + 1], label='Train loss')
-            l1_2, = plt.plot(t[:epoch_index + 1], epoch_test_loss[:epoch_index + 1], label='Test loss')
-            plt.legend(handles=[l1_1, l1_2])
-            plt.grid()
-            plt.gcf().gca().set_xlim(left = 0)
-            plt.title('Loss')
-            display.clear_output(wait=True)
-            display.display(plt.gcf())
-
-            plt.figure(num=2)
-            plt.clf()
-            l2_1, = plt.plot(t[:epoch_index + 1], epoch_train_accuracy[:epoch_index + 1], label='Train accuracy')
-            l2_2, = plt.plot(t[:epoch_index + 1], epoch_test_accuracy[:epoch_index + 1], label='Test accuracy')
-            plt.legend(handles=[l2_1, l2_2])
-            plt.grid()
-            plt.gcf().gca().set_ylim(0, 100)
-            plt.title('Accuracy')
-            display.clear_output(wait=True)
-            display.display(plt.gcf())
-
-            plt.figure(num=3)
-            plt.clf()
-            l3_1, = plt.plot(t[:epoch_index + 1], epoch_train_nochange_accuracy[:epoch_index + 1], label='Train accuracy: no change')
-            l3_2, = plt.plot(t[:epoch_index + 1], epoch_train_change_accuracy[:epoch_index + 1], label='Train accuracy: change')
-            l3_3, = plt.plot(t[:epoch_index + 1], epoch_test_nochange_accuracy[:epoch_index + 1], label='Test accuracy: no change')
-            l3_4, = plt.plot(t[:epoch_index + 1], epoch_test_change_accuracy[:epoch_index + 1], label='Test accuracy: change')
-            plt.legend(handles=[l3_1, l3_2, l3_3, l3_4])
-            plt.grid()
-            plt.gcf().gca().set_ylim(0, 100)
-            plt.title('Accuracy per class')
-            display.clear_output(wait=True)
-            display.display(plt.gcf())
-
-            plt.figure(num=4)
-            plt.clf()
-            l4_1, = plt.plot(t[:epoch_index + 1], epoch_train_precision[:epoch_index + 1], label='Train precision')
-            l4_2, = plt.plot(t[:epoch_index + 1], epoch_train_recall[:epoch_index + 1], label='Train recall')
-            l4_3, = plt.plot(t[:epoch_index + 1], epoch_train_Fmeasure[:epoch_index + 1], label='Train Dice/F1')
-            l4_4, = plt.plot(t[:epoch_index + 1], epoch_test_precision[:epoch_index + 1], label='Test precision')
-            l4_5, = plt.plot(t[:epoch_index + 1], epoch_test_recall[:epoch_index + 1], label='Test recall')
-            l4_6, = plt.plot(t[:epoch_index + 1], epoch_test_Fmeasure[:epoch_index + 1], label='Test Dice/F1')
-            plt.legend(handles=[l4_1, l4_2, l4_3, l4_4, l4_5, l4_6])
-            plt.grid()
-            plt.gcf().gca().set_ylim(0, 1)
-            plt.title('Precision, Recall and F-measure')
-            display.clear_output(wait=True)
-            display.display(plt.gcf())
-            fm = epoch_train_Fmeasure[epoch_index]
-            if fm > best_fm:
-                best_fm = fm
-                save_str = 'net-best_epoch-' + str(epoch_index + 1) + '_fm-' + str(fm) + '.pth.tar'
-                torch.save(self.model.state_dict(), save_str)
-            
-            lss = epoch_train_loss[epoch_index]
-            if lss < best_lss:
-                best_lss = lss
-                save_str = 'net-best_epoch-' + str(epoch_index + 1) + '_loss-' + str(lss) + '.pth.tar'
-                torch.save(self.model.state_dict(), save_str)
-                
-            if save:
-                im_format = 'png'
-
-                plt.figure(num=1)
-                plt.savefig(self.model_name + '-01-loss.' + im_format)
-
-                plt.figure(num=2)
-                plt.savefig(self.model_name + '-02-accuracy.' + im_format)
-
-                plt.figure(num=3)
-                plt.savefig(self.model_name + '-03-accuracy-per-class.' + im_format)
-
-                plt.figure(num=4)
-                plt.savefig(self.model_name + '-04-prec-rec-fmeas.' + im_format)
-            
-        out = {'train_loss': epoch_train_loss[-1],
-            'train_accuracy': epoch_train_accuracy[-1],
-            'train_nochange_accuracy': epoch_train_nochange_accuracy[-1],
-            'train_change_accuracy': epoch_train_change_accuracy[-1],
-            'test_loss': epoch_test_loss[-1],
-            'test_accuracy': epoch_test_accuracy[-1],
-            'test_nochange_accuracy': epoch_test_nochange_accuracy[-1],
-            'test_change_accuracy': epoch_test_change_accuracy[-1]}
-        
-        print('pr_c, rec_c, f_meas, pr_nc, rec_nc')
-        print(pr_rec)
-        
-        return out
+        return True
 
     def test(self, dset):
         self.model.eval()
@@ -318,8 +186,8 @@ class Model:
         tn = 0
         fp = 0
         fn = 0
-    
-        for idx, img_index in tqdm(dset.names.iterrows()):
+
+        for idx, img_index in tqdm.tqdm_notebook(dset.names.iterrows()):
                 img_index = img_index[0]
                 I1_full, I2_full, cm_full = dset.get_img(img_index)
                 

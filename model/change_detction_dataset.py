@@ -28,7 +28,7 @@ def read_img(path):
     I = np.stack((r, g, b), axis=2).astype("float")
 
     if NORMALISE_IMGS:
-        I = (I - I.mean()) / I.std()
+        I = I/255
     return I
 
 
