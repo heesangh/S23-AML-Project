@@ -22,6 +22,6 @@ pip install -r requirements.txt
 The `requirements-gpu.txt` file should list all Python libraries that your notebooks
 depend on for training models with cuda GPU-accelerations, and they will be installed using:
 
-'''
+```
 pip install -r requirements-gpu.txt
-'''
+```
