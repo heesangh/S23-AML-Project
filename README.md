@@ -2,14 +2,26 @@
 
 ### Directory
 
+### Model
+FC-EF, FC-Siam-Conc, FC-Siam-Diff:
+Rodrigo Caye Daudt, Bertrand Le Saux, Alexandre Boulch. (2018, October). Fully convolutional siamese networks for change detection. In 2018 25th IEEE International Conference on Image Processing (ICIP) (pp. 4063-4067). IEEE.
 
 ### Dataset
-
+CDD Dataset:
+M. A. Lebedev, Y. V. Vizilter, O. V. Vygolov, V. A. Knyaz, and A. Y. Rubis, “Change detection in remote sensing images using conditional adversarial networks,” The International Archives of the Photogrammetry, Remote Sensing and Spatial Information Sciences, vol. XLII-2, pp. 565–571, May 2018. 
 
 ### Notes
+
+
 The `requirements.txt` file should list all Python libraries that your notebooks
 depend on, and they will be installed using:
 
 ```
 pip install -r requirements.txt
 ```
+The `requirements-gpu.txt` file should list all Python libraries that your notebooks
+depend on for training models with cuda GPU-accelerations, and they will be installed using:
+
+'''
+pip install -r requirements-gpu.txt
+'''
