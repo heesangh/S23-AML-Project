@@ -35,3 +35,4 @@ pip install -r requirements-gpu.txt
 ```
 
 ### To execute the code, run the jupyter notebook file ```change_detection.ipynb```
+If not running in Google Colab, ignore and remove the first cell. If running in Google Colab, zip the whole directory and name it addon.zip. Then upload to the drive and mount drive to Google Colab. This code is configured to run in Google Colab. 
