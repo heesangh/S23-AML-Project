@@ -3,6 +3,9 @@
 ## Term project for Virginia Tech CS5824/ECE5424 Advanced Machine Learning Spring 2023
 ### Heesang Han (VT ECE), Chhayly Sreng (VT ECE), Spencer Paragas (VT CS), Ranhee Yoon (VT ME)
 
+### To execute the code, run the jupyter notebook file ```change_detection.ipynb```
+If not running in Google Colab, ignore and remove the first cell. If running in Google Colab, zip the whole directory except change_detection.ipynb and name it addon.zip. Then upload to the drive and mount drive to Google Colab. This code is configured to run in Google Colab. 
+
 ### Base code, including jupyter notebook:
 Rodrigo Caye Daudt, Bertrand Le Saux, Alexandre Boulch. (2018, October). Fully convolutional siamese networks for change detection. In 2018 25th IEEE International Conference on Image Processing (ICIP) (pp. 4063-4067). IEEE.
 (We modified the code)
@@ -34,5 +37,4 @@ depend on for training models with cuda GPU-accelerations, and they will be inst
 pip install -r requirements-gpu.txt
 ```
 
-### To execute the code, run the jupyter notebook file ```change_detection.ipynb```
-If not running in Google Colab, ignore and remove the first cell. If running in Google Colab, zip the whole directory and name it addon.zip. Then upload to the drive and mount drive to Google Colab. This code is configured to run in Google Colab. 
+
