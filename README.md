@@ -34,4 +34,4 @@ depend on for training models with cuda GPU-accelerations, and they will be inst
 pip install -r requirements-gpu.txt
 ```
 
-### To execute the code, run the jupyter notebook file. 
+### To execute the code, run the jupyter notebook file '''change_detection.ipynb'''
