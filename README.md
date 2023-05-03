@@ -1,7 +1,7 @@
 # Change Detection in satellite images with Early and Late fusion 
 
-## Term project for Virginia Tech CS5824/ECE5424 Advanced Machine Learning Spring 2023.
-## Heesang Han (VT ECE), Chhayly Sreng (VT ECE), Spencer Paragas (VT CS), Ranhee Yoon (VT ME)
+## Term project for Virginia Tech CS5824/ECE5424 Advanced Machine Learning Spring 2023
+### Heesang Han (VT ECE), Chhayly Sreng (VT ECE), Spencer Paragas (VT CS), Ranhee Yoon (VT ME)
 
 ### Base code, including jupyter notebook:
 Rodrigo Caye Daudt, Bertrand Le Saux, Alexandre Boulch. (2018, October). Fully convolutional siamese networks for change detection. In 2018 25th IEEE International Conference on Image Processing (ICIP) (pp. 4063-4067). IEEE.
