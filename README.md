@@ -19,7 +19,7 @@ depend on for training models with cuda GPU-accelerations, and they will be inst
 ```
 pip install -r requirements-gpu.txt
 ```
-3. Download addon.zip from this link: https://drive.google.com/file/d/1bVkP3PNMRQeadZYJisbCMtG-s_6bHKOk/view?usp=sharing
+3. Download addon.zip from this link: https://drive.google.com/file/d/1Pj9TaKvHbkD60NFyG0L9WPr6a81Jg6nK/view?usp=sharing
 (addon.zip contains dataset and python code for datasets and torch model)
 
 4. Extract addon.zip right in the local repository. If you are using Google Colab, upload this zip file to your drive root directory and mount Google Drive to Google Colab.
